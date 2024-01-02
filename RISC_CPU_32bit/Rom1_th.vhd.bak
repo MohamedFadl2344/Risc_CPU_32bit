@@ -1,0 +1,86 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity alu_tb is
+end alu_tb;
+
+architecture tb_arch of alu_tb is
+    signal SrcA, SrcB, AluResult : std_logic_vector(31 downto 0);
+    signal Cin, Zero, Overflow, CarryOut, Neg : std_logic;
+    signal AluControl : std_logic_vector(2 downto 0);
+
+    component alu
+        port(
+            SrcA       : in std_logic_vector(31 downto 0);
+            SrcB       : in std_logic_vector(31 downto 0);
+            Cin        : in std_logic;
+            AluControl : in std_logic_vector(2 downto 0);
+            AluResult  : out std_logic_vector(31 downto 0);
+            Zero       : out std_logic;
+            Overflow   : out std_logic;
+            CarryOut   : out std_logic;
+            Neg        : out std_logic
+        );
+    end component;
+
+    procedure run_test_case(
+        constant TestName: string;
+        constant TestSrcA: std_logic_vector;
+        constant TestSrcB: std_logic_vector;
+        constant TestCin: std_logic;
+        constant TestAluControl: std_logic_vector
+    ) is
+    begin
+        SrcA <= TestSrcA;
+        SrcB <= TestSrcB;
+        Cin <= TestCin;
+        AluControl <= TestAluControl;
+
+        report "Stimulus: Running test case " & TestName severity NOTE;
+        wait for 10 ns;
+
+        -- Add any additional checks or assertions here
+
+    end procedure;
+
+begin
+    uut: alu
+        port map(
+            SrcA       => SrcA,
+            SrcB       => SrcB,
+            Cin        => Cin,
+            AluControl => AluControl,
+            AluResult  => AluResult,
+            Zero       => Zero,
+            Overflow   => Overflow,
+            CarryOut   => CarryOut,
+            Neg        => Neg
+        );
+
+    process
+    begin
+        run_test_case("Test Case 1", X"00000001", X"00000002", '0', X"000");
+        run_test_case("Test Case 2", X"FFFFFFFF", X"00000001", '1', X"001");
+        run_test_case("Test Case 3", X"55555555", X"AAAAAAAA", '1', X"001");
+        run_test_case("Test Case 4", X"80000000", X"00000001", '0', X"010");
+        run_test_case("Test Case 5", X"11111111", X"22222222", '0', X"011");
+        run_test_case("Test Case 6", X"00000001", X"00000001", '1', X"011");
+        run_test_case("Test Case 7", X"00000001", X"00000001", '0', X"100");
+        run_test_case("Test Case 8", X"00000001", X"00000000", '1', X"101");
+        run_test_case("Test Case 9", X"00000001", X"00000000", '0', X"110");
+        run_test_case("Test Case 10", X"11110000", X"00001111", '1', X"111");
+        run_test_case("Test Case 11", X"11110000", X"00001111", '0', X"111");
+        run_test_case("Test Case 12", X"11110000", X"00001111", '1', X"000");
+        run_test_case("Test Case 13", X"11110000", X"00001111", '0', X"001");
+        run_test_case("Test Case 14", X"11110000", X"00001111", '1', X"010");
+        run_test_case("Test Case 15", X"11110000", X"00001111", '0', X"011");
+        run_test_case("Test Case 16", X"11110000", X"00001111", '1', X"100");
+
+        report "Simulation finished" severity NOTE;
+        wait;
+    end process;
+
+end tb_arch;
+

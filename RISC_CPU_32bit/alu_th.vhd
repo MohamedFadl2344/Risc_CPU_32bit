@@ -1,0 +1,148 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity alu_tb is
+end alu_tb;
+
+architecture tb_arch of alu_tb is
+  signal SrcA, SrcB, AluResult : std_logic_vector(7 downto 0);
+  signal Cin, Zero, Overflow, CarryOut, Neg : std_logic;
+  signal AluControl : std_logic_vector(2 downto 0);
+
+  component alu
+    port(
+      SrcA       : in std_logic_vector(7 downto 0);
+      SrcB       : in std_logic_vector(7 downto 0);
+      Cin        : in std_logic;
+      AluControl : in std_logic_vector(2 downto 0);
+      AluResult  : out std_logic_vector(7 downto 0);
+      Zero       : out std_logic;
+      Overflow   : out std_logic;
+      CarryOut   : out std_logic;
+      Neg        : out std_logic
+    );
+  end component;
+
+begin
+  -- Instantiate the ALU component
+  uut: alu
+    port map(
+      SrcA       => SrcA,
+      SrcB       => SrcB,
+      Cin        => Cin,
+      AluControl => AluControl,
+      AluResult  => AluResult,
+      Zero       => Zero,
+      Overflow   => Overflow,
+      CarryOut   => CarryOut,
+      Neg        => Neg
+    );
+
+  -- Stimulus process
+  stimulus: process
+  begin
+    -- Test Case 1
+    SrcA <= "00000001";
+    SrcB <= "00000010";
+    Cin <= '0';
+    AluControl <= "000";
+    wait for 10 ns;
+
+    -- Test Case 2
+    SrcA <= "11111111";
+    SrcB <= "00000001";
+    Cin <= '1';
+    AluControl <= "001";
+    wait for 10 ns;
+
+    -- Test Case 3 (Addition with Carry Out)
+    SrcA <= "01010101";
+    SrcB <= "10101010";
+    Cin <= '1';
+    AluControl <= "001";
+    wait for 10 ns;
+
+    -- Test Case 4 (Subtraction with Overflow)
+    SrcA <= "10000000";
+    SrcB <= "11000000";
+    Cin <= '0';
+    AluControl <= "011";
+    wait for 10 ns;
+	
+	-- Test Case 5 (Multiplication)
+    SrcA <= "00000011";
+    SrcB <= "00000010";
+    Cin <= '0';
+    AluControl <= "100";
+    wait for 10 ns;
+
+    -- Test Case 6 (Multiplication)
+    SrcA <= "11111110";
+    SrcB <= "00000010";
+    Cin <= '0';
+    AluControl <= "100";
+    wait for 10 ns;
+
+    -- Test Case 7 (Multiplication)
+    SrcA <= "00001000";
+    SrcB <= "00000010";
+    Cin <= '0';
+    AluControl <= "100";
+    wait for 10 ns;
+
+    -- Test Case 8 (Multiplication)
+    SrcA <= "00001000";
+    SrcB <= "00000001";
+    Cin <= '0';
+    AluControl <= "100";
+    wait for 10 ns;
+
+    -- Test Case 9 (Subtraction)
+    SrcA <= "00001000";
+    SrcB <= "00000001";
+    Cin <= '0';
+    AluControl <= "011";
+    wait for 10 ns;
+
+    -- Test Case 10 (Subtraction)
+    SrcA <= "11111111";
+    SrcB <= "01111111";
+    Cin <= '1';
+    AluControl <= "011";
+    wait for 10 ns;
+
+    -- Test Case 11 (Bitwise AND)
+    SrcA <= "11110000";
+    SrcB <= "00001111";
+    Cin <= '0';
+    AluControl <= "100";
+    wait for 10 ns;
+
+    -- Test Case 12 (Bitwise OR)
+    SrcA <= "11110000";
+    SrcB <= "00001111";
+    Cin <= '0';
+    AluControl <= "101";
+    wait for 10 ns;
+
+    -- Test Case 13 (Bitwise XOR)
+    SrcA <= "11110000";
+    SrcB <= "00001111";
+    Cin <= '0';
+    AluControl <= "110";
+    wait for 10 ns;
+
+    -- Test Case 14 (Bitwise NOT)
+    SrcA <= "11110000";
+    SrcB <= "00000000";
+    Cin <= '0';
+    AluControl <= "111";
+    wait for 10 ns;
+
+    -- Add more test cases as needed
+    wait;
+  end process stimulus;
+
+end tb_arch;
+
